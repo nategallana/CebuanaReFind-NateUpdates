@@ -407,43 +407,6 @@ namespace CebuanaReFind.Helpers
         {
             return @"
             SELECT 
-		CASE 
-			WHEN Pos.DocNo LIKE '%-SR%' THEN
-				LEFT(Pos.DocNo, CHARINDEX('-', Pos.DocNo))
-				+ 'RT'
-				+ REPLACE(
-					SUBSTRING(
-						Pos.DocNo, 
-						CHARINDEX('-', Pos.DocNo) + 1, 
-						LEN(Pos.DocNo)
-					),
-					'SR',
-					''
-				)
-
-			WHEN Pos.DocNo LIKE '%-SO%' THEN
-				LEFT(Pos.DocNo, CHARINDEX('-', Pos.DocNo))
-				+ 'SO'
-				+ REPLACE(
-					SUBSTRING(
-						Pos.DocNo, 
-						CHARINDEX('-', Pos.DocNo) + 1, 
-						LEN(Pos.DocNo)
-					),
-					'SO',
-					''
-				)
-
-			ELSE
-				LEFT(Pos.DocNo, CHARINDEX('-', Pos.DocNo))
-                
-				+ SUBSTRING(
-					Pos.DocNo, 
-					CHARINDEX('-', Pos.DocNo) + 1, 
-					LEN(Pos.DocNo)
-				)
-		END AS [Header Text],
-
         Pos.DocNo AS [Receipt No.],
         FORMAT(MAX(Pos.CreatedTime), 'MM/dd/yyyy') AS PostingDate, 
         FORMAT(MAX(Pos.TaxInvoiceDate), 'MM/dd/yyyy') AS DocumentDate, 
@@ -489,6 +452,8 @@ REPLACE(CONVERT(VARCHAR(19), MAX(Pos.CreatedTime), 120), '-', ''),
 				AND NULLIF(LTRIM(RTRIM(Pos.DocNo2)), '') IS NOT NULL
 			)
 		)
+      AND Pos.DocNo NOT LIKE '%-SO%'
+      AND Pos.DocNo NOT LIKE 'SO%'
       AND PosDtl.ItemCode <> ''
     GROUP BY Pos.DocNo, PosDtl.ItemCode
     ORDER BY Pos.DocNo ASC;
